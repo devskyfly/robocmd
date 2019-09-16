@@ -53,7 +53,7 @@ trait YiiTrait
         }
 
         $versionPath = $this->yiiVersionsPath();
-        $projectPath = realpath($versionPath.'/'.$args[0]);
+        $projectPath = $versionPath.'/'.$args[0];
 
         if (!file_exists($versionPath)) {
             $this->taskFilesystemStack()
