@@ -8,7 +8,7 @@ trait GitTrait
     
     protected function designPath()
     {
-        return __DIR__."/builder";
+        return getcwd()."/builder";
     }
 
     protected function designJsPath()

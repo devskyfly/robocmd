@@ -32,17 +32,17 @@ trait YiiTrait
 
     protected function yiiFrontendPath()
     {
-        return __DIR__."/frontend/web";
+        return getcwd()."/frontend/web";
     }
 
     public function yiiVersionsPath()
     {
-        return __DIR__.'/../versions';
+        return getcwd().'/../versions';
     }
 
     public function yiiSrcPath()
     {
-        return __DIR__;
+        return getcwd();
     }
 
     public function yiiDeploy(array $args)
