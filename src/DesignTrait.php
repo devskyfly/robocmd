@@ -3,21 +3,53 @@ namespace devskyfly\robocmd;
 
 trait DesignTrait
 {
+
     //////////////////////////////////////////////////////////////////////////////////
-    //Git
-
-    public function gitCommit($opt = ["index|i" => false])
+    //Disign
+    
+    protected function designPath()
     {
-        if ($opt["index"]) {
-            $this->gitAdd();
-        }
-
-        $this->taskExec('git commit')->run();
+        return getcwd()."/builder";
     }
 
-    public function gitAdd($args=["."])
+    protected function designJsPath()
     {
-        $this->yiiClear();
-        $this->taskExec('git add')->args($args)->run();
+        return $this->designPath().'/build/app/js';
+    }
+
+    protected function designCssPath()
+    {
+        return $this->designPath().'/build/app/css';
+    }
+
+    protected function designImgPath()
+    {
+        return $this->designPath().'/build/app/img';
+    }
+
+    protected function designFontsPath()
+    {
+        return $this->designPath().'/build/app/fonts';
+    }
+
+    public function designUpdate()
+    {
+        $this->designBuild();
+        $this->designMv();
+    }
+
+    public function designMv()
+    {
+        $this->_copyDir($this->designJsPath(), $this->yiiFrontendPath().'/js');
+        $this->_copyDir($this->designCssPath(), $this->yiiFrontendPath().'/css');
+        $this->_copyDir($this->designImgPath(), $this->yiiFrontendPath().'/img');
+        $this->_copyDir($this->designFontsPath(), $this->yiiFrontendPath().'/fonts');
+    }
+
+    public function designBuild()
+    {
+        $this->taskGulpRun('build')
+        ->dir($this->designPath())
+        ->run();
     }
 }
