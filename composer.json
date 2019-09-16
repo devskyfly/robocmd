@@ -1,0 +1,16 @@
+{
+    "name": "devskyfly/robocmd",
+    "description": "Assets of commands.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ivan",
+            "email": "devskyfly@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": { "devskyfly\\robocmd\\": "src/" }
+    },
+}
