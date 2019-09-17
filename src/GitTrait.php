@@ -12,12 +12,19 @@ trait GitTrait
             $this->gitAdd();
         }
 
-        $this->taskExec('git commit')->run();
+        $this->taskExec('git commit')->dir(getcwd())->run();
     }
 
-    public function gitAdd($args=["."])
+    public function gitAdd(array $args)
     {
+        if(empty($args)){
+            $args = ["."];
+        }
+
+        $args = implode(" ", $args);
         $this->yiiClear();
-        $this->taskExec('git add')->args($args)->run();
+        $this->taskExec('git add '.$args)
+        ->dir(getcwd())
+        ->run();
     }
 }
