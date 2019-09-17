@@ -32,6 +32,22 @@ trait DesignTrait
         return $this->designPath().'/build/app/fonts';
     }
 
+    protected function designMvGrafic()
+    {
+        $buildPath = $this->designPath().'/build';
+        $png = glob($buildPath.'/*.png');
+        $xml = glob($buildPath.'/*.xml');
+        $ico = glob($buildPath.'/*.ico');
+        $svg = glob($buildPath.'/*.svg');
+        $files = array_merge($png, $xml, $ico, $svg);
+        $to = $this->yiiSrcPath().'/frontend/web';
+
+        foreach ($files as $file) {
+            $baseName = basename($file);
+            $this->taskFilesystemStack()->copy($file, $to."/".$baseName)->run();
+        }
+    }
+
     public function designUpdate()
     {
         $this->designBuild();
@@ -44,6 +60,7 @@ trait DesignTrait
         $this->_copyDir($this->designCssPath(), $this->yiiFrontendPath().'/css');
         $this->_copyDir($this->designImgPath(), $this->yiiFrontendPath().'/img');
         $this->_copyDir($this->designFontsPath(), $this->yiiFrontendPath().'/fonts');
+        $this->designMvGrafic();
     }
 
     public function designBuild()
