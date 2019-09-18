@@ -86,7 +86,7 @@ trait YiiTrait
         ->run();
         $this->taskFilesystemStack()->chmod($projectPath, 0775, 0000, true)->run();
         $this->taskComposerInstall()->dir($projectPath)->run();
-        $this->yiiDeployCallBack();
+        $this->yiiDeployCallBack($projectPath);
     }
 
     public function yiiClearQueue()
