@@ -48,7 +48,7 @@ trait YiiTrait
 
     public function yiiDeploy(array $args)
     {   
-        if (count($args)!==1) {
+        if (!isset($args[0])) {
             $this->say("Need app version in args.");
             return -1;
         }
