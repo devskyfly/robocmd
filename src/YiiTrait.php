@@ -77,6 +77,7 @@ trait YiiTrait
 
         $this->taskExec($projectPath.'/init --env=Production --overwrite=All')
         ->run();
+        $this->taskFilesystemStack()->chmod($projectPath, 0775, 0000, true)->run();
         $this->taskComposerInstall()->dir($projectPath)->run();
         $this->yiiDeployCallBack();
     }
