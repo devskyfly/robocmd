@@ -25,6 +25,7 @@ trait YiiTrait
     /**
      * Can Redeclarate
      */
+
     public function yiiDeployExclude()
     {
         return null;
@@ -75,7 +76,13 @@ trait YiiTrait
         ->exclude($this->yiiDeployExclude())
         ->run();
 
-        $this->taskExec($projectPath.'/init --env=Production --overwrite=All')
+        if(!isset($args[1])) {
+            $env = "Production";
+        } else{
+            $env = $args[1];
+        }
+
+        $this->taskExec($projectPath."/init --env={$env} --overwrite=All")
         ->run();
         $this->taskFilesystemStack()->chmod($projectPath, 0775, 0000, true)->run();
         $this->taskComposerInstall()->dir($projectPath)->run();
