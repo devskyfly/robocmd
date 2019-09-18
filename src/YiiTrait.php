@@ -75,7 +75,7 @@ trait YiiTrait
         ->exclude($this->yiiDeployExclude())
         ->run();
 
-        $this->taskExec($projectPath.'/init --env=Development --overwrite=All')
+        $this->taskExec($projectPath.'/init --env=Production --overwrite=All')
         ->run();
         $this->taskComposerInstall()->dir($projectPath)->run();
         $this->yiiDeployCallBack();
