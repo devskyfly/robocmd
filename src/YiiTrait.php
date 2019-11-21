@@ -67,7 +67,7 @@ trait YiiTrait
             if ($this->confirm("Do you want to clear it?")) {
                 $this->_deleteDir($projectPath);
             } else {
-                $this->say("Task Terminated.");
+                $this->say("Task was terminated.");
                 return -1;
             }
         }
@@ -77,7 +77,11 @@ trait YiiTrait
         ->run();
 
         if(!isset($args[1])) {
-            $env = "Production";
+            if ($this->confirm("Do you want to use \"Production\" env?")) {
+                $env = "Production";
+            } else {
+                $this->say("Task was terminated.");
+            }
         } else{
             $env = $args[1];
         }
