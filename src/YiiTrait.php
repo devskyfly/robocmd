@@ -6,6 +6,11 @@ trait YiiTrait
     //////////////////////////////////////////////////////////////////////////////////
     //Yii
     
+    public function devTest()
+    {
+
+    }
+
     /**
      * Can Redeclarate
      */
@@ -46,11 +51,36 @@ trait YiiTrait
         return getcwd();
     }
 
-    public function yiiDeploy(array $args)
+    /**
+     * Return array about additional env array.
+     *
+     * @return []
+     */
+    public function yiiEnv()
+    {
+        return [];
+    }
+
+    /**
+     * Deploy yii application.
+     * 
+     * Deploy yii application by copy src path to versions path.
+     *
+     * @param string args[0] - app version 
+     * --env string ["Production", "Development"]
+     */
+    public function yiiDeploy(array $args, $opt = ["env|e" => "Production"])
     {   
+        $env = ["Production", "Development"];
+        $env = array_merge($env, $this->yiiEnv());
+
         if (!isset($args[0])) {
             $this->say("Need app version in args.");
             return -1;
+        }
+
+        if (!in_array($opt["env"], $env)) {
+            throw new \OutOfRangeException("Value \"{$opt['env']}\" out of env array.");
         }
 
         $versionPath = $this->yiiVersionsPath();
@@ -63,7 +93,7 @@ trait YiiTrait
         }
 
         if (file_exists($projectPath)) {
-            $this->io()->title("Directory {projectPath} is already exists.");
+            $this->io()->title("Directory \"{$projectPath}\" is already exists.");
             if ($this->confirm("Do you want to clear it?")) {
                 $this->_deleteDir($projectPath);
             } else {
@@ -76,25 +106,13 @@ trait YiiTrait
         ->exclude($this->yiiDeployExclude())
         ->run();
 
-        if(!isset($args[1])) {
-            if ($this->confirm("Do you want to use \"Production\" env?")) {
-                $env = "Production";
-            } else {
-                $this->say("Task was terminated.");
-            }
-        } else{
-            $env = $args[1];
-        }
-
         $this->taskExec($projectPath."/init --env={$env} --overwrite=All")
         ->run();
         $this->taskFilesystemStack()->chmod($projectPath, 0775, 0000, true)->run();
-        $this->taskComposerInstall()->dir($projectPath)->run();
+        $this->taskComposerInstall()
+        ->noDev()
+        ->dir($projectPath)->run();
         $this->yiiDeployCallBack($projectPath);
     }
 
-    public function yiiClearQueue()
-    {
-        $this->taskExec('./yii queue/clear')->run();
-    }
 }
