@@ -12,5 +12,8 @@
     "require": {},
     "autoload": {
         "psr-4": { "devskyfly\\robocmd\\": "src/" }
+    },
+    "require-dev": {
+        "codeception/codeception": "^3.1"
     }
 }

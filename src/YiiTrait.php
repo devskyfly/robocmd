@@ -6,46 +6,15 @@ trait YiiTrait
     //////////////////////////////////////////////////////////////////////////////////
     //Yii
     
-    public function devTest()
-    {
-
-    }
-
+    /****************
+     * User functions
+     ***************/
+    
     /**
-     * Can Redeclarate
+     * Return current path were script was invoked. 
+     *
+     * @return void
      */
-    public function yiiDeployCallBack()
-    {
-
-    }
-
-    /**
-     * Can Redeclarate
-     */
-    public function yiiClear()
-    {
-        
-    }
-
-    /**
-     * Can Redeclarate
-     */
-
-    public function yiiDeployExclude()
-    {
-        return null;
-    }
-
-    protected function yiiFrontendPath()
-    {
-        return getcwd()."/frontend/web";
-    }
-
-    public function yiiVersionsPath()
-    {
-        return getcwd().'/../versions';
-    }
-
     public function yiiSrcPath()
     {
         return getcwd();
@@ -62,20 +31,54 @@ trait YiiTrait
     }
 
     /**
+     * User defined callback on deploy script finish.
+     */
+    public function yiiAfterDeployCallback($projectPath)
+    {
+
+    }
+
+    /**
+     * Can Redeclarate
+     */
+    public function yiiClear()
+    {
+        
+    }
+
+    /**
+     * Return files/dirs list to exclude from deploy.
+     * 
+     * @return null | string[]
+     */
+
+    public function yiiDeployExcludeFiles()
+    {
+        return null;
+    }
+
+    /********************
+     * End user functions
+     *******************/
+
+    
+    
+
+    /**
      * Deploy yii application.
      * 
-     * Deploy yii application by copy src path to versions path.
+     * Deploy yii application by copy src path to versions path, exclude neaded files/dirs, and execute after deploy callback function.
      *
-     * @param string args[0] - app version 
      * --env string ["Production", "Development"]
+     * --build string "v1.0.0"
      */
-    public function yiiDeploy(array $args, $opt = ["env|e" => "Production"])
+    public function yiiDeploy($opt = ["env|e" => "Production", "build|b" => ""])
     {   
         $env = ["Production", "Development"];
         $env = array_merge($env, $this->yiiEnv());
 
-        if (!isset($args[0])) {
-            $this->say("Need app version in args.");
+        if (empty($opt["build"])) {
+            $this->say("Need app build name.");
             return -1;
         }
 
@@ -84,7 +87,7 @@ trait YiiTrait
         }
 
         $versionPath = $this->yiiVersionsPath();
-        $projectPath = $versionPath.'/'.$args[0];
+        $projectPath = $versionPath.'/'.$opt["build"];
 
         if (!file_exists($versionPath)) {
             $this->taskFilesystemStack()
@@ -94,7 +97,7 @@ trait YiiTrait
 
         if (file_exists($projectPath)) {
             $this->io()->title("Directory \"{$projectPath}\" is already exists.");
-            if ($this->confirm("Do you want to clear it?")) {
+            if ($this->confirm("Do you want to clear it")) {
                 $this->_deleteDir($projectPath);
             } else {
                 $this->say("Task was terminated.");
@@ -102,17 +105,35 @@ trait YiiTrait
             }
         }
 
-        $this->taskCopyDir([$this->yiiSrcPath() => $projectPath])
-        ->exclude($this->yiiDeployExclude())
+        $copyTask = $this->taskCopyDir([$this->yiiSrcPath() => $projectPath]);
+        $exludeFiles = $this->yiiDeployExcludeFiles();
+        
+        if (!empty($exludeFiles)) {
+            $copyTask->exclude($exludeFiles);
+        };
+
+        $copyTask->run();
+
+        $this
+        ->taskExec($projectPath."/init --env={$opt["env"]} --overwrite=All")
         ->run();
 
-        $this->taskExec($projectPath."/init --env={$env} --overwrite=All")
-        ->run();
         $this->taskFilesystemStack()->chmod($projectPath, 0775, 0000, true)->run();
+        
         $this->taskComposerInstall()
         ->noDev()
         ->dir($projectPath)->run();
-        $this->yiiDeployCallBack($projectPath);
+
+        $this->yiiAfterDeployCallback($projectPath);
     }
 
+    protected function yiiFrontendPath()
+    {
+        return getcwd()."/frontend/web";
+    }
+
+    public function yiiVersionsPath()
+    {
+        return getcwd().'/../versions';
+    }
 }

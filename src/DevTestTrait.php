@@ -5,6 +5,17 @@ namespace devskyfly\robocmd;
 trait DevTestTrait 
 {
 
+    /****************
+     * User functions
+     ***************/
+    public function testsClear()
+    {
+
+    }
+    /********************
+     * End user functions
+     *******************/
+
     /**
      * Run all test suites or one, optional it runs local server.
      * 
@@ -43,8 +54,6 @@ trait DevTestTrait
         $collection->run();
     }
 
-    abstract public function testsClear();
-
     protected function testsPath()
     {
         $path = getcwd()."/tests";
@@ -64,7 +73,7 @@ trait DevTestTrait
     }
 
     /**
-     * Run local server in .
+     * Run local server.
      *
      * --port integer
      */
@@ -72,9 +81,11 @@ trait DevTestTrait
     {
         $dir = $this->testsAppWebPath();
         $server = $this->taskServer($opts["port"]);
+        
         if ($opts["back"]) {
             $server->background();
         }
+
         $server->dir($dir)
         ->run();
     }
