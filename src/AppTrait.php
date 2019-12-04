@@ -1,39 +1,29 @@
 <?php
 namespace devskyfly\robocmd;
 
-trait YiiTrait 
+trait AppTrait 
 {
-    public function path()
-    {
-        return getcwd();
-    }
 
+    //////////////////////////////////////////////////////////////////////////////////
+    //App
+    
     /**
-     * Deploy yii application.
+     * Deploy application.
      * 
-     * Deploy yii application by copy src path to versions path, exclude neaded files/dirs, and execute after deploy callback function.
+     * Deploy application by copy src path to versions path, exclude neaded files/dirs, and execute after deploy callback function.
      *
      * @param array $opts
-     * @option $env "Production"|"Development"|...
      * @option $build "v1.0.0"
      */
-    public function yiiDeploy($opts = ["env|e" => "Production", "build|b" => ""])
+    public function appDeploy($opts = ["build|b" => ""])
     {   
         if (empty($opts["build"])) {
             $this->say("Need app build name.");
             return -1;
         }
 
-        // Check environment
-        $env = ["Production", "Development"];
-        $env = array_merge($env, $this->yiiEnv());
-
-        if (!in_array($opts["env"], $env)) {
-            throw new \OutOfRangeException("Value \"{$opts['env']}\" out of env array.");
-        }
-
         //Check version path exists
-        $versionPath = $this->yiiVersionsPath();
+        $versionPath = $this->appVersionsPath();
         $targetPath = $versionPath.'/'.$opts["build"];
 
         if (!file_exists($versionPath)) {
@@ -54,8 +44,8 @@ trait YiiTrait
         }
 
         //Copy src to target
-        $copyTask = $this->taskCopyDir([$this->yiiSrcPath() => $targetPath]);
-        $exludeFiles = $this->yiiDeployExcludeFiles();
+        $copyTask = $this->taskCopyDir([$this->appSrcPath() => $targetPath]);
+        $exludeFiles = $this->appDeployExcludeFiles();
         
             //Exclude not neaded files and dirs
             if (!empty($exludeFiles)) {
@@ -64,38 +54,20 @@ trait YiiTrait
 
         $copyTask->run();
 
-        // Yii install environment
-        $this
-        ->taskExec($targetPath."/init --env={$opts["env"]} --overwrite=All")
-        ->run();
-
         $this->taskFilesystemStack()->chmod($targetPath, 0775, 0000, true)->run();
         
-        // Composer install no dev
-        $this->taskComposerInstall()
-        ->noDev()
-        ->dir($targetPath)->run();
-
-        $this->yiiAfterDeployCallback($targetPath);
+        $this->appAfterDeployCallback($targetPath);
     }
 
-    protected function yiiFrontendPath()
-    {
-        return getcwd()."/frontend/web";
-    }
-
-    public function yiiVersionsPath($name = "")
+    public function appVersionsPath($name = "")
     {
         if (empty($name)){
             return getcwd().'/../versions';
         } else {
             return getcwd().'/../'.$name;
-        }
+        } 
     }
 
-    //////////////////////////////////////////////////////////////////////////////////
-    //Yii
-    
     /****************
      * User functions
      ***************/
@@ -105,25 +77,15 @@ trait YiiTrait
      *
      * @return void
      */
-    public function yiiSrcPath()
+    public function appSrcPath()
     {
         return getcwd();
     }
 
     /**
-     * Return array about additional env array.
-     *
-     * @return []
-     */
-    public function yiiEnv()
-    {
-        return [];
-    }
-
-    /**
      * User defined callback on deploy script finish.
      */
-    public function yiiAfterDeployCallback($targetPath)
+    public function appAfterDeployCallback($targetPath)
     {
 
     }
@@ -131,7 +93,7 @@ trait YiiTrait
     /**
      * Can Redeclarate
      */
-    public function yiiClear()
+    public function appClear()
     {
         
     }
@@ -142,7 +104,7 @@ trait YiiTrait
      * @return null | string[]
      */
 
-    public function yiiDeployExcludeFiles()
+    public function appDeployExcludeFiles()
     {
         return null;
     }
@@ -150,4 +112,6 @@ trait YiiTrait
     /********************
      * End user functions
      *******************/
+
+    
 }
