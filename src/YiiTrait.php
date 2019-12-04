@@ -3,11 +3,6 @@ namespace devskyfly\robocmd;
 
 trait YiiTrait 
 {
-    public function path()
-    {
-        return getcwd();
-    }
-
     /**
      * Deploy yii application.
      * 
