@@ -39,7 +39,7 @@ trait DevTestTrait
         }
 
         if ($opts['localserver']) {
-            $this->testsSeverRun(["port" => 3000, "back" => true]);
+            $this->testsServerRun(["port" => 3000, "back" => true]);
         }
 
         $collection = $this->collectionBuilder();
@@ -78,7 +78,7 @@ trait DevTestTrait
      *
      * --port integer
      */
-    public function testsSeverRun($opts = ["port|p" => "3000", "back|b" => false])
+    public function testsServerRun($opts = ["port|p" => "3000", "back|b" => false])
     {
         $dir = $this->testsAppWebPath();
         $server = $this->taskServer($opts["port"]);
