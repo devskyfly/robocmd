@@ -20,9 +20,9 @@ trait DevTestTrait
      * Run all test suites or one, optional it runs local server.
      * 
      * @param array $opts
-     * @option $suite ["all", "unit", "functional"]
-     * @option localserver
-     * @option debug
+     * @option string $suite "all"|"unit"|"functional"
+     * @option boolean $localserver
+     * @option boolean $debug
      */
     public function testsRun($opts = ["suite|s" => "all", "debug|d" => false,"localserver|l" => false])
     {
