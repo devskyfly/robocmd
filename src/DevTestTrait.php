@@ -45,11 +45,11 @@ trait DevTestTrait
         $collection = $this->collectionBuilder();
 
         if ($opts['suite'] == "all" || $opts['suite'] == "unit") {
-            $collection->addTask($this->taskExec(__DIR__.'/vendor/bin/codecept run unit'.($opts['debug']?" --debug":"")));
+            $collection->addTask($this->taskExec(getcwd().'/vendor/bin/codecept run unit'.($opts['debug']?" --debug":"")));
         }
 
         if ($opts['suite'] == "all" || $opts['suite'] == "functional") {
-            $collection->addTask($this->taskExec(__DIR__.'/vendor/bin/codecept run functional'.($opts['debug']?" --debug":"")));
+            $collection->addTask($this->taskExec(getcwd().'/vendor/bin/codecept run functional'.($opts['debug']?" --debug":"")));
         }
         
         $collection->run();
