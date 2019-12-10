@@ -124,7 +124,7 @@ trait DevTestTrait
 
         $this->devUpMigration();
         $this->testsMigrationsApply();
-        $this->testsAfterInitProject();
+        $this->devAfterInitProject();
     }
 
     /**
