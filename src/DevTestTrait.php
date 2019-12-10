@@ -119,7 +119,7 @@ trait DevTestTrait
             $database = $this->ask("Input database name");
             $user = $this->ask("Input user name");
             $opts = ["database" => $database, "user" => $user];
-            $this->testsCreateDb($opts);
+            $this->devCreateDb($opts);
         }
 
         $this->devUpMigration();
