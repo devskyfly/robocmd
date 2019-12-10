@@ -12,6 +12,7 @@ trait DevTestTrait
     {
 
     }
+
     /********************
      * End user functions
      *******************/
@@ -64,6 +65,15 @@ trait DevTestTrait
         return $path;
     }
 
+    protected function testsAppPath()
+    {
+        $path = $this->testsPath()."/app";
+        if (!file_exists($path)) {
+            throw new \RuntimeException("Dir {$path} does not exist.");
+        }
+        return $path;
+    }
+
     protected function testsAppWebPath()
     {
         $path = $this->testsPath()."/app/web";
@@ -89,5 +99,132 @@ trait DevTestTrait
 
         $server->dir($dir)
         ->run();
+    }
+
+    public function testsMigrationsApply()
+    {
+        $appPath = $this->testsAppPath();
+        $this->taskExec("{$appPath}/yii migrate/up")->run();
+    }
+
+    // Development
+
+    /**
+     * Init project.
+     * 
+     */
+    public function devInitProject()
+    {
+        if ($this->confirm("Do you want to create database")) {
+            $database = $this->ask("Input database name");
+            $user = $this->ask("Input user name");
+            $opts = ["database" => $database, "user" => $user];
+            $this->testsCreateDb($opts);
+        }
+
+        $this->devUpMigration();
+        $this->testsMigrationsApply();
+        $this->testsAfterInitProject();
+    }
+
+    /**
+     * Return project path.
+     *
+     * @return void
+     */
+    public function devProjectPath()
+    {
+        return getcwd();
+    }
+
+    /**
+     * Your custom tasks after defult project init.
+     *
+     */
+    protected function devAfterInitProject()
+    {
+        //Your code
+    }
+
+    // Migrations
+
+    /**
+     * Create migration.
+     *
+     * @param array $opts
+     * @return void
+     */
+    public function devCreateMigration($opts = ["migration|m" => ""])
+    {
+        if (empty($opts["migration"])) {
+            throw new \InvalidArgumentException('Property $opts[\'migration\'] is empty.');
+        }
+
+        $app = $this->testsAppPath();
+        $this->taskExec("{$app}/yii migrate/create {$opts["migration"]} --migrationPath=\"{$this->devProjectPath()}/migrations\"")->run();
+    }
+
+    /**
+     * Apply migrations.
+     *
+     * @return void
+     */
+    public function devUpMigration()
+    {
+        $app = $this->testsAppPath();
+        $this->taskExec("{$app}/yii migrate/up --migrationPath=\"{$this->devProjectPath()}/migrations\"")->run();
+    }
+
+    /**
+     * Rollback migrations.
+     *
+     * @return void
+     */
+    public function devDownMigration()
+    {
+        $app = $this->testsAppPath();
+        $this->taskExec("{$app}/yii migrate/down --migrationPath=\"{$this->devProjectPath()}/migrations\"")->run();
+    }
+
+    // Database
+
+    /**
+     * Create database.
+     * 
+     * @param array $opts
+     * @option string $database
+     * @option string $user
+     */
+    public function devCreateDb($opts = ["database|d" => "", "user" => "root"])
+    {
+        if (empty($opts['database'])) {
+            throw new \InvalidArgumentException('Set database name.');
+        }
+
+        if (empty($opts['user'])) {
+            throw new \InvalidArgumentException('Set user name.');
+        }
+
+        $this->taskExec("echo CREATE DATABASE IF NOT EXISTS {$opts['database']} CHARACTER SET utf8 COLLATE utf8_general_ci| mysql -u{$opts['user']} -p")->run();
+    }
+
+     /**
+     * Drop database.
+     * 
+     * @param array $opts
+     * @option string $database
+     * @option string $user
+     */
+    public function devDropDb($opts = ["database|d" => "", "user" => "root"])
+    {
+        if (empty($opts['database'])) {
+            throw new \InvalidArgumentException('Set database name.');
+        }
+
+        if (empty($opts['user'])) {
+            throw new \InvalidArgumentException('Set user name.');
+        }
+
+        $this->taskExec("echo DROP DATABASE {$opts['database']} | mysql -u{$opts['user']} -p")->run();
     }
 }
