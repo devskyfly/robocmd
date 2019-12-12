@@ -161,7 +161,7 @@ trait DevTestTrait
         }
 
         $app = $this->testsAppPath();
-        $this->taskExec("{$app}/yii migrate/create {$opts["migration"]} --migrationPath=\"{$this->devProjectPath()}/migrations\"")->run();
+        $this->taskExec("{$app}/yii migrate/create {$opts["migration"]} --migrationPath=\"{$this->devProjectPath()}/src/migrations\"")->run();
     }
 
     /**
@@ -172,7 +172,7 @@ trait DevTestTrait
     public function devUpMigration()
     {
         $app = $this->testsAppPath();
-        $this->taskExec("{$app}/yii migrate/up --migrationPath=\"{$this->devProjectPath()}/migrations\"")->run();
+        $this->taskExec("{$app}/yii migrate/up --migrationPath=\"{$this->devProjectPath()}/src/migrations\"")->run();
     }
 
     /**
@@ -183,7 +183,7 @@ trait DevTestTrait
     public function devDownMigration()
     {
         $app = $this->testsAppPath();
-        $this->taskExec("{$app}/yii migrate/down --migrationPath=\"{$this->devProjectPath()}/migrations\"")->run();
+        $this->taskExec("{$app}/yii migrate/down --migrationPath=\"{$this->devProjectPath()}/src/migrations\"")->run();
     }
 
     // Database
