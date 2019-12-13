@@ -141,7 +141,7 @@ trait DevTestTrait
      * Your custom tasks after defult project init.
      *
      */
-    protected function devAfterInitProject()
+    public function devAfterInitProject()
     {
         //Your code
     }
