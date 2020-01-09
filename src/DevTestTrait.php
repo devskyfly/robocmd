@@ -25,7 +25,7 @@ trait DevTestTrait
      * @option boolean $localserver
      * @option boolean $debug
      */
-    public function testsRun($opts = ["suite|s" => "all", "debug|d" => false, "localserver|l" => false, "view|v" = false])
+    public function testsRun($opts = ["suite|s" => "all", "debug|d" => false, "localserver|l" => false, "view|v" => false])
     {
         $this->testsClear();
         
