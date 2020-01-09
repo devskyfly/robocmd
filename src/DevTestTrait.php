@@ -25,7 +25,7 @@ trait DevTestTrait
      * @option boolean $localserver
      * @option boolean $debug
      */
-    public function testsRun($opts = ["suite|s" => "all", "debug|d" => false,"localserver|l" => false])
+    public function testsRun($opts = ["suite|s" => "all", "debug|d" => false, "localserver|l" => false, "view|v" = false])
     {
         $this->testsClear();
         
@@ -46,11 +46,11 @@ trait DevTestTrait
         $collection = $this->collectionBuilder();
 
         if ($opts['suite'] == "all" || $opts['suite'] == "unit") {
-            $collection->addTask($this->taskExec(getcwd().'/vendor/bin/codecept run unit'.($opts['debug']?" --debug":"")));
+            $collection->addTask($this->taskExec(getcwd().'/vendor/bin/codecept run unit'.($opts['debug']?" --debug":"").($opts['view']?" -v":"")));
         }
 
         if ($opts['suite'] == "all" || $opts['suite'] == "functional") {
-            $collection->addTask($this->taskExec(getcwd().'/vendor/bin/codecept run functional'.($opts['debug']?" --debug":"")));
+            $collection->addTask($this->taskExec(getcwd().'/vendor/bin/codecept run functional'.($opts['debug']?" --debug":"").($opts['view']?" -v":"")));
         }
         
         $collection->run();
