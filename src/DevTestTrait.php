@@ -122,8 +122,11 @@ trait DevTestTrait
             $this->devCreateDb($opts);
         }
 
-        $this->devUpMigration();
-        $this->testsMigrationsApply();
+        if ($this->confirm("Do you want to run migrations")) {
+            $this->devUpMigration();
+            $this->testsMigrationsApply();
+        }
+        
         $this->devAfterInitProject();
     }
 
